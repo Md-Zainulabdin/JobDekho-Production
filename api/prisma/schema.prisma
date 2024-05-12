@@ -12,3 +12,73 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum Status {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id          Int        @id @default(autoincrement())
+  email       String     @unique @db.VarChar(190)
+  firstname   String     @db.VarChar(190)
+  lastname    String     @db.VarChar(190)
+  password    String
+  role        String     @default("USER")
+  experience  String?
+  position    String?
+  location    String?
+  phoneNumber String?
+  description String?    @db.VarChar(255)
+  skills      String[]
+  education   Education? // Marking as optional
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+}
+
+model Education {
+  id         Int      @id @default(autoincrement())
+  school     String   @db.VarChar(190)
+  degree     String   @db.VarChar(64)
+  started_at DateTime
+  ended_at   DateTime
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  User       User?    @relation(fields: [userId], references: [id]) // Marking as optional
+  userId     Int?     @unique
+}
+
+model Company {
+  id          Int      @id @default(autoincrement())
+  name        String
+  logo        String?
+  slug        String   @unique
+  description String
+  phoneNumber String?
+  location    String
+  email       String   @unique
+  website     String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  Job         Job[]
+  status      Status   @default(PENDING)
+}
+
+model Job {
+  id               Int      @id @default(autoincrement())
+  title            String   @db.VarChar(190)
+  description      String
+  slug             String   @unique
+  location         String?
+  locationType     String
+  applicationEmail String?
+  applicationUrl   String?
+  status           Status   @default(PENDING)
+  salary           Int
+  jobType          String
+  companyId        Int
+  company          Company  @relation(fields: [companyId], references: [id])
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+}
