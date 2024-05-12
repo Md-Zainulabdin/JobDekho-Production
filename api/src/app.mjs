@@ -17,8 +17,8 @@ import authRouter from "./routes/auth.routes.mjs"
 import userRouter from "./routes/user.routes.mjs"
 import companyRouter from "./routes/company.routes.mjs"
 
-app.get('/helloworld', (req, res) => {
-    res.send("Hello World")
+app.get('/', (req, res) => {
+   return res.send("Hello World")
 })
 
 app.use('/api/v1/auth', authRouter)
